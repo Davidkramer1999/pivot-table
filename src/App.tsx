@@ -19,6 +19,8 @@ function App() {
   const handleConfigChange = (config: PivotConfig) => {
     setPivotConfig(config);
 
+    console.log('handleConfigChange', config);
+    console.log('dataInstance', dataInstance);
     // Get current data from the data worksheet
     if (dataInstance && typeof dataInstance.getData === 'function') {
       const freshData = dataInstance.getData() as unknown;
@@ -47,17 +49,18 @@ function App() {
 
         <div className="worksheets-container">
           {/* <section className="worksheet-section"> */}
-            <DataWorksheet
-              onInstanceReady={handleDataInstanceReady}
-              onDataChange={setCurrentData}
-            />
+          <DataWorksheet
+            onInstanceReady={handleDataInstanceReady}
+            onDataChange={setCurrentData}
+          />
           {/* </section> */}
 
           {/* <section className="worksheet-section"> */}
-            <PivotTableWorksheet
-              sourceData={currentData}
-              config={pivotConfig}
-            />
+          <PivotTableWorksheet
+            key={JSON.stringify(pivotConfig)}
+            sourceData={currentData}
+            config={pivotConfig}
+          />
           {/* </section> */}
         </div>
       </main>
