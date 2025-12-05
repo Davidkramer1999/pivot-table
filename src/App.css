@@ -118,6 +118,9 @@ body {
   padding: 1.5rem;
   border-radius: 8px;
   border: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 600px;
 }
 
 .worksheet-section h2 {
@@ -132,11 +135,100 @@ body {
   font-size: 0.9rem;
 }
 
+/* Make worksheet containers fill available space */
+.data-worksheet,
+.pivot-worksheet {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.pivot-table-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.data-table-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pivot-table-container>div,
+.data-table-container>div,
+.data-worksheet>div:last-child {
+  flex: 1;
+  min-height: 0;
+}
+
 /* Jspreadsheet overrides */
 .jss {
   --jss-border: #444;
   --jss-background: #2a2a2a;
   --jss-color: #fff;
+}
+
+/* Jspreadsheet layout + dark theme tweaks */
+.data-worksheet .jss,
+.pivot-worksheet .jss {
+  width: 100%;
+  background: #1a1a1a;
+  border-radius: 6px;
+  border: 1px solid #333;
+  overflow: hidden;
+}
+
+.jss .jss_container,
+.jss .jss_header,
+.jss .jss_body {
+  background: #1f1f1f;
+}
+
+.jss .jss_corner,
+.jss thead th {
+  background: #2a2a2a;
+  color: #e3e3e3;
+}
+
+.jss tbody td {
+  background: #1f1f1f;
+  color: #f5f5f5;
+}
+
+.jss tbody tr:nth-child(odd) td {
+  background: #191919;
+}
+
+.jss td.selected,
+.jss td.highlight {
+  background: #2e4b83;
+  color: #fff;
+}
+
+.jss thead th,
+.jss tbody td {
+  border-color: #333;
+}
+
+.jss .jss_toolbar {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+  color: #e3e3e3;
+}
+
+.jss .jss_content {
+  min-height: 520px;
+}
+
+.jss input,
+.jss select,
+.jss textarea {
+  background: #121212;
+  color: #f4f4f4;
 }
 
 /* Responsive design */
