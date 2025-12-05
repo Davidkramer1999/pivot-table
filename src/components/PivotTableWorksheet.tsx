@@ -1,5 +1,5 @@
-import { useRef, useEffect } from 'react';
-import jspreadsheet from 'jspreadsheet';
+import { useMemo, useRef } from 'react';
+import { jspreadsheet, Spreadsheet, Worksheet } from '@jspreadsheet/react';
 import type { PivotConfig } from './PivotControls';
 import 'jsuites/dist/jsuites.css';
 import 'jspreadsheet/dist/jspreadsheet.css';
@@ -10,55 +10,39 @@ interface PivotTableWorksheetProps {
 }
 
 export default function PivotTableWorksheet({ sourceData, config }: PivotTableWorksheetProps) {
-    const jssRef = useRef<HTMLDivElement>(null);
-    const instanceRef = useRef<any>(null);
+    const spreadsheetRef = useRef<jspreadsheet.worksheetInstance[] | undefined>(undefined);
 
-    useEffect(() => {
-        if (!jssRef.current || !sourceData || sourceData.length === 0) return;
-
-        // Generate pivot table data
-        const pivotData = generatePivotData(sourceData, config);
-
-        // Destroy existing instance if it exists
-        if (instanceRef.current) {
-            if (typeof instanceRef.current.destroy === 'function') {
-                instanceRef.current.destroy();
-            }
-            instanceRef.current = null;
+    // Generate pivot table data whenever sourceData or config changes
+    const pivotData = useMemo(() => {
+        if (!sourceData || sourceData.length === 0) {
+            return { data: [], columns: [] };
         }
-
-        // Create new spreadsheet instance with pivot data
-        const instance = jspreadsheet(jssRef.current, {
-            worksheets: [{
-                data: pivotData.data,
-                columns: pivotData.columns,
-                minDimensions: [pivotData.columns.length, pivotData.data.length + 5],
-                tableOverflow: true,
-                tableWidth: '100%',
-                tableHeight: '500px',
-            }],
-            tabs: false,
-            toolbar: false,
-        });
-
-        instanceRef.current = instance;
-
-        // Cleanup
-        return () => {
-            if (instanceRef.current) {
-                if (typeof instanceRef.current.destroy === 'function') {
-                    instanceRef.current.destroy();
-                }
-                instanceRef.current = null;
-            }
-        };
+        return generatePivotData(sourceData, config);
     }, [sourceData, config]);
+
+    if (pivotData.data.length === 0) {
+        return (
+            <div className="pivot-worksheet">
+                <h2>Pivot Table Worksheet</h2>
+                <p>No data available for pivot table.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="pivot-worksheet">
             <h2>Pivot Table Worksheet</h2>
             <p>Aggregated data based on selected grouping and aggregation settings.</p>
-            <div ref={jssRef} />
+            <Spreadsheet ref={spreadsheetRef} tabs={false} toolbar={false}>
+                <Worksheet
+                    data={pivotData.data}
+                    columns={pivotData.columns}
+                    minDimensions={[pivotData.columns.length, pivotData.data.length + 5]}
+                    tableOverflow={true}
+                    tableWidth="100%"
+                    tableHeight="600px"
+                />
+            </Spreadsheet>
         </div>
     );
 }
