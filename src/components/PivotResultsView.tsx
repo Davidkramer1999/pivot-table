@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
+import { Spreadsheet, Worksheet, jspreadsheet } from '@jspreadsheet/react';
 import type { PivotConfig } from './PivotConfigPanel';
 import { generatePivotData } from '../utils/pivotHelpers';
-import Header from './ui/SheetContainer';
-import SpreadsheetView from './ui/SpreadsheetView';
+import Header from './ui/header';
 
 interface PivotResultsViewProps {
     sourceData: (string | number)[][];
@@ -10,7 +10,7 @@ interface PivotResultsViewProps {
 }
 
 export default function PivotResultsView({ sourceData, config }: PivotResultsViewProps) {
-
+    const spreadsheetRef = useRef<jspreadsheet.spreadsheetInstance | null>(null);
     const pivotData = useMemo(() => {
         if (!sourceData || sourceData.length === 0) {
             return { data: [], columns: [] };
@@ -27,12 +27,20 @@ export default function PivotResultsView({ sourceData, config }: PivotResultsVie
     return (
         <div className="pivot-worksheet">
             <Header title="Pivot Table Worksheet" description="Aggregated data based on selected grouping and aggregation settings." />
-            <SpreadsheetView
-                data={pivotData.data}
-                columns={pivotData.columns}
-                minDimensions={[pivotData.columns.length, pivotData.data.length + 5]}
-                tableOverflow={true}
-            />
+            <div className="pivot-table-container">
+                <Spreadsheet
+                    ref={spreadsheetRef as React.RefObject<jspreadsheet.spreadsheetInstance>}
+                    tabs={false}
+                    toolbar={false}
+                >
+                    <Worksheet
+                        data={pivotData.data}
+                        columns={pivotData.columns}
+                        minDimensions={[pivotData.columns.length, pivotData.data.length + 5]}
+                        tableOverflow={true}
+                    />
+                </Spreadsheet>
+            </div>
         </div>
     );
 }

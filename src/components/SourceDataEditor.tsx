@@ -1,8 +1,13 @@
 import { useRef, useCallback, useEffect } from 'react';
-import { jspreadsheet } from '@jspreadsheet/react';
+import { Spreadsheet, Worksheet, jspreadsheet } from '@jspreadsheet/react';
 import { sampleData, columnHeaders } from '../data/sampleData';
-import Header from './ui/SheetContainer';
-import SpreadsheetView from './ui/SpreadsheetView';
+import { JSPREADSHEET_LICENSE_KEY } from '../config/jspreadsheet.config';
+import Header from './ui/header';
+import 'jsuites/dist/jsuites.css';
+import 'jspreadsheet/dist/jspreadsheet.css';
+
+// Set license once
+jspreadsheet.setLicense(JSPREADSHEET_LICENSE_KEY);
 
 interface SourceDataEditorProps {
     onDataChange?: (data: (string | number)[][]) => void;
@@ -37,17 +42,22 @@ export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps
     return (
         <div className="data-worksheet">
             <Header title="Data Worksheet" description="Edit the data below. Changes will automatically update the pivot table." />
-            <SpreadsheetView
-                spreadsheetRef={spreadsheetRef}
-                tabs={true}
-                toolbar={true}
-                onLoad={handleLoad}
-                data={sampleData}
-                columns={columnHeaders}
-                minDimensions={[4, 25]}
-                tableOverflow={true}
-                onChange={handleDataChange}
-            />
+            <div className="data-table-container">
+                <Spreadsheet
+                    ref={spreadsheetRef as React.RefObject<jspreadsheet.spreadsheetInstance>}
+                    tabs={true}
+                    toolbar={true}
+                    onload={handleLoad}
+                >
+                    <Worksheet
+                        data={sampleData}
+                        columns={columnHeaders}
+                        minDimensions={[4, 25]}
+                        tableOverflow={true}
+                        onchange={handleDataChange}
+                    />
+                </Spreadsheet>
+            </div>
         </div>
     );
 }
