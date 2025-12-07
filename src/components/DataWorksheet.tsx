@@ -1,64 +1,79 @@
-import { useRef } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { jspreadsheet } from '@jspreadsheet/react';
 import { sampleData, columnHeaders } from '../data/sampleData';
-import SheetContainer from './ui/SheetContainer';
-import SpreadsheetView from './ui/SpreadsheetView';
+import SpreadsheetComponent from './ui/SpreadsheetComponent';
+import WorksheetComponent from './ui/WorksheetComponent';
 
 interface DataWorksheetProps {
     onDataChange?: (data: (string | number)[][]) => void;
-    onInstanceReady?: (instance: any) => void;
 }
 
-export default function DataWorksheet({ onDataChange, onInstanceReady }: DataWorksheetProps) {
+/**
+ * DataWorksheet component - manages its own spreadsheet instance internally
+ * Notifies parent component when data changes via callback
+ */
+export default function DataWorksheet({ onDataChange }: DataWorksheetProps) {
     const spreadsheetRef = useRef<jspreadsheet.spreadsheetInstance | null>(null);
-
-    const handleLoad = (instance: jspreadsheet.spreadsheetInstance) => {
-        console.log('handleLoad');
-        console.log(instance);
-        spreadsheetRef.current = instance;
-        const worksheet = instance.worksheets?.[0];
-
-        if (onInstanceReady && worksheet) {
-            onInstanceReady(worksheet);
+    
+    // Notify parent with initial data on mount
+    useEffect(() => {
+        if (onDataChange && sampleData.length > 0) {
+            onDataChange(sampleData);
         }
+    }, [onDataChange]);
 
-        if (onDataChange && worksheet?.getData) {
-            const raw = worksheet.getData() as unknown;
-            const normalized = Array.isArray(raw) ? (raw as (string | number)[][]) : [];
-            onDataChange(normalized);
-        }
-    };
-
-    const handleChange = () => {
+    // Extract data from worksheet and notify parent
+    const extractAndNotifyData = useCallback(() => {
         const worksheet = spreadsheetRef.current?.worksheets?.[0];
-        if (!worksheet) return;
+        if (!worksheet || !onDataChange) return;
 
-        if (onDataChange && worksheet.getData) {
-            // jspreadsheet returns a loosely typed value; normalize to 2D array for consumers
+        try {
             const raw = worksheet.getData() as unknown;
             const normalized = Array.isArray(raw) ? (raw as (string | number)[][]) : [];
-            onDataChange(normalized);
+            if (normalized.length > 0) {
+                onDataChange(normalized);
+            }
+        } catch (error) {
+            console.error('Error extracting data from worksheet:', error);
         }
-    };
+    }, [onDataChange]);
+
+    // Handle spreadsheet load - check if worksheet is immediately available
+    const handleLoad = useCallback((instance: jspreadsheet.spreadsheetInstance) => {
+        spreadsheetRef.current = instance;
+        
+        // Try to extract data immediately if worksheet is available
+        const worksheet = instance.worksheets?.[0];
+        if (worksheet && onDataChange) {
+            extractAndNotifyData();
+        }
+    }, [extractAndNotifyData, onDataChange]);
+
+    // Handle worksheet data changes
+    const handleChange = useCallback(() => {
+        extractAndNotifyData();
+    }, [extractAndNotifyData]);
 
     return (
-        <SheetContainer
-            title="Data Worksheet"
-            description="Edit the data below. Changes will automatically update the pivot table."
-            className="data-worksheet"
-        >
-            <SpreadsheetView
-                containerClassName="data-table-container"
-                spreadsheetRef={spreadsheetRef}
-                tabs={true}
-                toolbar={true}
-                onLoad={handleLoad}
-                data={sampleData}
-                columns={columnHeaders}
-                minDimensions={[4, 25]}
-                tableOverflow={true}
-                onChange={handleChange}
-            />
-        </SheetContainer>
+        <div className="data-worksheet">
+            <h2>Data Worksheet</h2>
+            <p>Edit the data below. Changes will automatically update the pivot table.</p>
+            <div className="data-table-container">
+                <SpreadsheetComponent
+                    spreadsheetRef={spreadsheetRef}
+                    tabs={true}
+                    toolbar={true}
+                    onLoad={handleLoad}
+                >
+                    <WorksheetComponent
+                        data={sampleData}
+                        columns={columnHeaders}
+                        minDimensions={[4, 25]}
+                        tableOverflow={true}
+                        onChange={handleChange}
+                    />
+                </SpreadsheetComponent>
+            </div>
+        </div>
     );
 }

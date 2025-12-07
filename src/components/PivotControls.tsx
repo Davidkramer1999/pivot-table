@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Select from './ui/select';
 
 export interface PivotConfig {
@@ -11,6 +11,10 @@ interface PivotControlsProps {
     onConfigChange: (config: PivotConfig) => void;
 }
 
+/**
+ * PivotControls component - manages pivot configuration
+ * Automatically updates parent when configuration changes
+ */
 export default function PivotControls({ onConfigChange }: PivotControlsProps) {
     const [groupBy1, setGroupBy1] = useState('Category');
     const [groupBy2, setGroupBy2] = useState('Subcategory');
@@ -30,15 +34,14 @@ export default function PivotControls({ onConfigChange }: PivotControlsProps) {
         []
     );
 
-    const handleUpdate = () => {
-        console.log('handleUpdate');
-        console.log(groupBy1, groupBy2, aggregateColumn);
+    // Auto-update parent whenever configuration changes
+    useEffect(() => {
         onConfigChange({
             groupBy1,
             groupBy2,
             aggregateColumn,
         });
-    };
+    }, [groupBy1, groupBy2, aggregateColumn, onConfigChange]);
 
     return (
         <div className="pivot-controls">
@@ -62,7 +65,6 @@ export default function PivotControls({ onConfigChange }: PivotControlsProps) {
                     onChange={setAggregateColumn}
                     options={aggregateOptions}
                 />
-                <button onClick={handleUpdate}>Pivot Table</button>
             </div>
         </div>
     );
