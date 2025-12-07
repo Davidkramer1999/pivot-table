@@ -1,9 +1,9 @@
 import { useMemo, useRef } from 'react';
-import { jspreadsheet, Spreadsheet, Worksheet } from '@jspreadsheet/react';
+import { jspreadsheet } from '@jspreadsheet/react';
 import type { PivotConfig } from './PivotControls';
 import { generatePivotData } from '../utils/pivotHelpers';
-import 'jsuites/dist/jsuites.css';
-import 'jspreadsheet/dist/jspreadsheet.css';
+import SheetContainer from './ui/SheetContainer';
+import SpreadsheetView from './ui/SpreadsheetView';
 
 interface PivotTableWorksheetProps {
     sourceData: (string | number)[][];
@@ -11,7 +11,7 @@ interface PivotTableWorksheetProps {
 }
 
 export default function PivotTableWorksheet({ sourceData, config }: PivotTableWorksheetProps) {
-    const spreadsheetRef = useRef<jspreadsheet.worksheetInstance[] | undefined>(undefined);
+    const spreadsheetRef = useRef<jspreadsheet.spreadsheetInstance | null>(null);
 
     // Generate pivot table data whenever sourceData or config changes
     const pivotData = useMemo(() => {
@@ -23,27 +23,32 @@ export default function PivotTableWorksheet({ sourceData, config }: PivotTableWo
 
     if (pivotData.data.length === 0) {
         return (
-            <div className="pivot-worksheet">
-                <h2>Pivot Table Worksheet</h2>
-                <p>No data available for pivot table.</p>
-            </div>
+            <SheetContainer
+                title="Pivot Table Worksheet"
+                description="No data available for pivot table."
+                className="pivot-worksheet"
+            >
+                {null}
+            </SheetContainer>
         );
     }
 
     return (
-        <div className="pivot-worksheet">
-            <h2>Pivot Table Worksheet</h2>
-            <p>Aggregated data based on selected grouping and aggregation settings.</p>
-            <div className="pivot-table-container">
-                <Spreadsheet ref={spreadsheetRef} tabs={false} toolbar={false}>
-                    <Worksheet
-                        data={pivotData.data}
-                        columns={pivotData.columns}
-                        minDimensions={[pivotData.columns.length, pivotData.data.length + 5]}
-                        tableOverflow={true}
-                    />
-                </Spreadsheet>
-            </div>
-        </div>
+        <SheetContainer
+            title="Pivot Table Worksheet"
+            description="Aggregated data based on selected grouping and aggregation settings."
+            className="pivot-worksheet"
+        >
+            <SpreadsheetView
+                containerClassName="pivot-table-container"
+                spreadsheetRef={spreadsheetRef}
+                tabs={false}
+                toolbar={false}
+                data={pivotData.data}
+                columns={pivotData.columns}
+                minDimensions={[pivotData.columns.length, pivotData.data.length + 5]}
+                tableOverflow={true}
+            />
+        </SheetContainer>
     );
 }
