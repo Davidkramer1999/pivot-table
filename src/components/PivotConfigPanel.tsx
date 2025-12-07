@@ -23,8 +23,21 @@ const AGGREGATE_OPTIONS = [
 export default function PivotConfigPanel({ config, onConfigChange }: PivotConfigPanelProps) {
 
     const handleConfigFieldChange = (field: keyof PivotConfig, value: string) => {
-        onConfigChange({ ...config, [field]: value });
+        const newConfig = { ...config, [field]: value };
+        
+        if (field === 'groupBy1' && value === config.groupBy2) {
+            newConfig.groupBy2 = GROUP_OPTIONS.find(opt => opt.value !== value)?.value || GROUP_OPTIONS[0].value;
+        }
+        
+        if (field === 'groupBy2' && value === config.groupBy1) {
+            newConfig.groupBy2 = GROUP_OPTIONS.find(opt => opt.value !== config.groupBy1)?.value || GROUP_OPTIONS[0].value;
+        }
+        
+        onConfigChange(newConfig);
     };
+
+    // Secondary options should exclude the primary selection
+    const secondaryOptions = GROUP_OPTIONS.filter(opt => opt.value !== config.groupBy1);
 
     return (
         <div className="pivot-controls">
@@ -40,7 +53,7 @@ export default function PivotConfigPanel({ config, onConfigChange }: PivotConfig
                     label="Group By (Secondary)"
                     value={config.groupBy2}
                     onChange={(value) => handleConfigFieldChange('groupBy2', value)}
-                    options={GROUP_OPTIONS}
+                    options={secondaryOptions}
                 />
                 <Select
                     label="Aggregate Column"
