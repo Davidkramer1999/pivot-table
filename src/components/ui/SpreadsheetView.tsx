@@ -4,20 +4,15 @@ import JSpreadsheetWrapper from './JSpreadsheetWrapper';
 import JWorksheetWrapper from './JWorksheetWrapper';
 
 interface SpreadsheetViewProps {
-    // Spreadsheet props
     spreadsheetRef?: React.RefObject<jspreadsheet.spreadsheetInstance | null>;
     onLoad?: (instance: jspreadsheet.spreadsheetInstance) => void;
     tabs?: boolean;
     toolbar?: boolean;
-
-    // Worksheet props
     data: (string | number)[][];
     columns: Array<{ title: string; width?: string }>;
     minDimensions?: [number, number];
     tableOverflow?: boolean;
     onChange?: () => void;
-
-    // Container props
     containerClassName?: string;
 }
 

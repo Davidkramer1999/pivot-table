@@ -8,10 +8,6 @@ interface JWorksheetWrapperProps {
     onChange?: () => void;
 }
 
-/**
- * Wrapper component for jspreadsheet Worksheet
- * Provides a clean interface for worksheet configuration
- */
 export default function JWorksheetWrapper({
     data,
     columns,

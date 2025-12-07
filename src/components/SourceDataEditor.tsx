@@ -17,7 +17,7 @@ export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps
         }
     }, [onDataChange]);
 
-    const notifyDataChange = useCallback(() => {
+    const handleDataChange = useCallback(() => {
         if (!onDataChange) return;
 
         const worksheet = spreadsheetRef.current?.worksheets?.[0];
@@ -31,12 +31,8 @@ export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps
 
     const handleLoad = useCallback((instance: jspreadsheet.spreadsheetInstance) => {
         spreadsheetRef.current = instance;
-        notifyDataChange();
-    }, [notifyDataChange]);
-
-    const handleChange = useCallback(() => {
-        notifyDataChange();
-    }, [notifyDataChange]);
+        handleDataChange();
+    }, [handleDataChange]);
 
     return (
         <div className="data-worksheet">
@@ -50,7 +46,7 @@ export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps
                 columns={columnHeaders}
                 minDimensions={[4, 25]}
                 tableOverflow={true}
-                onChange={handleChange}
+                onChange={handleDataChange}
             />
         </div>
     );

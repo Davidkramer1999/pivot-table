@@ -5,7 +5,6 @@ import { JSPREADSHEET_LICENSE_KEY } from '../../config/jspreadsheet.config';
 import 'jsuites/dist/jsuites.css';
 import 'jspreadsheet/dist/jspreadsheet.css';
 
-// Set license once
 jspreadsheet.setLicense(JSPREADSHEET_LICENSE_KEY);
 
 interface JSpreadsheetWrapperProps {
@@ -16,10 +15,6 @@ interface JSpreadsheetWrapperProps {
     spreadsheetRef?: React.RefObject<jspreadsheet.spreadsheetInstance | null>;
 }
 
-/**
- * Wrapper component for jspreadsheet Spreadsheet
- * Handles license setup and provides a clean interface
- */
 export default function JSpreadsheetWrapper({
     children,
     tabs = false,
