@@ -6,7 +6,6 @@ import Header from './ui/header';
 import 'jsuites/dist/jsuites.css';
 import 'jspreadsheet/dist/jspreadsheet.css';
 
-// Set license once
 jspreadsheet.setLicense(JSPREADSHEET_LICENSE_KEY);
 
 interface SourceDataEditorProps {
@@ -39,6 +38,8 @@ export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps
         handleDataChange();
     }, [handleDataChange]);
 
+    const minDimensions =  sampleData.length > 0 ? [4, sampleData.length] : [4, 25]; 
+
     return (
         <div className="data-worksheet">
             <Header title="Data Worksheet" description="Edit the data below. Changes will automatically update the pivot table." />
@@ -52,7 +53,7 @@ export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps
                     <Worksheet
                         data={sampleData}
                         columns={columnHeaders}
-                        minDimensions={[4, 25]}
+                        minDimensions={minDimensions}
                         tableOverflow={true}
                         onchange={handleDataChange}
                     />

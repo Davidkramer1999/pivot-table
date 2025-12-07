@@ -11,6 +11,27 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Spacing variables */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+
+  /* Layout variables */
+  --container-max-width: 1600px;
+  --worksheet-min-height: 500px;
+  --worksheet-max-height: 800px;
+
+  /* Color variables */
+  --color-primary: #646cff;
+  --color-primary-hover: #535bf2;
+  --color-border: #e0e0e0;
+  --color-background: #ffffff;
+  --color-background-alt: #f5f5f5;
+  --color-text: #213547;
+  --color-text-muted: #666;
 }
 
 * {
@@ -23,55 +44,61 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--color-background-alt);
 }
 
 .app {
-  max-width: 1600px;
+  max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--spacing-lg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-header {
   text-align: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #646cff;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .app-header h1 {
   font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  color: #646cff;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-primary);
 }
 
 .app-header p {
   font-size: 1.1rem;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .app-main {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--spacing-lg);
+  flex: 1;
+  min-height: 0;
 }
 
+/* Controls Section */
 .controls-section {
-  background: #ffffff;
-  padding: 1.5rem;
+  background: var(--color-background);
+  padding: var(--spacing-md);
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--color-border);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .pivot-controls h3 {
-  margin-bottom: 1rem;
-  color: #646cff;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-primary);
 }
 
 .control-group {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-sm);
   flex-wrap: wrap;
   align-items: flex-end;
 }
@@ -79,24 +106,24 @@ body {
 .control-group label {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--spacing-xs);
   font-size: 0.9rem;
-  color: #333;
+  color: var(--color-text);
 }
 
 .control-group select {
-  padding: 0.5rem;
+  padding: var(--spacing-xs);
   border-radius: 4px;
   border: 1px solid #ccc;
-  background: #ffffff;
-  color: #333;
+  background: var(--color-background);
+  color: var(--color-text);
   font-size: 1rem;
   min-width: 150px;
 }
 
 .control-group button {
   padding: 0.6rem 1.5rem;
-  background: #646cff;
+  background: var(--color-primary);
   color: white;
   border: none;
   border-radius: 4px;
@@ -106,98 +133,93 @@ body {
 }
 
 .control-group button:hover {
-  background: #535bf2;
+  background: var(--color-primary-hover);
 }
 
+/* Worksheets Container */
 .worksheets-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-}
-
-.worksheet-section {
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  height: 700px;
-}
-
-.worksheet-section h2 {
-  margin-bottom: 0.5rem;
-  color: #646cff;
-  font-size: 1.5rem;
-}
-
-.worksheet-section p {
-  margin-bottom: 1rem;
-  color: #666;
-  font-size: 0.9rem;
-}
-
-/* Make worksheet containers fill available space */
-.data-worksheet,
-.pivot-worksheet {
-  display: flex;
-  flex-direction: column;
+  gap: var(--spacing-lg);
   flex: 1;
   min-height: 0;
 }
 
-/* Table containers with controlled dimensions */
-.pivot-table-container,
-.data-table-container {
-  flex: 1;
-  width: 10000px;
-  max-height: 100%;
-  overflow: hidden;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background: #ffffff;
+/* Header Component */
+.header {
+  margin-bottom: var(--spacing-md);
 }
 
-.pivot-table-container>div,
-.data-table-container>div {
+.header h2 {
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-primary);
+  font-size: 1.5rem;
+}
+
+.header p {
+  margin-bottom: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+/* Worksheet Components */
+.data-worksheet,
+.pivot-worksheet {
+  background: var(--color-background);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-md);
+  height: var(--worksheet-min-height);
+}
+
+/* Table Containers - Fixed height containers */
+.data-table-container,
+.pivot-table-container {
+  width: 100%;
+  height: calc(var(--worksheet-min-height) - 120px);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-background);
+  overflow: hidden;
+}
+
+/* Jspreadsheet Styling */
+.data-table-container .jss,
+.pivot-table-container .jss {
+  --jss-border: var(--color-border);
+  --jss-background: var(--color-background);
+  --jss-color: var(--color-text);
+  width: 100%;
+  height: 100%;
+  background: var(--color-background);
+}
+
+.jss {
   width: 100%;
   height: 100%;
 }
 
-/* Jspreadsheet light theme */
-.jss {
-  --jss-border: #d0d0d0;
-  --jss-background: #ffffff;
-  --jss-color: #333;
-}
-
-/* Jspreadsheet layout + light theme tweaks */
-.data-worksheet .jss,
-.pivot-worksheet .jss {
+.jss .jss_container {
   width: 100%;
-  background: #ffffff;
-  border-radius: 4px;
-  border: 1px solid #e0e0e0;
-  overflow: auto;
+  height: 100%;
 }
 
-.jss .jss_container,
 .jss .jss_header,
 .jss .jss_body {
-  background: #ffffff;
+  background: var(--color-background);
 }
 
 .jss .jss_corner,
 .jss thead th {
   background: #f8f8f8;
-  color: #333;
+  color: var(--color-text);
   font-weight: 600;
 }
 
 .jss tbody td {
-  background: #ffffff;
-  color: #333;
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .jss tbody tr:nth-child(odd) td {
@@ -212,57 +234,40 @@ body {
 
 .jss thead th,
 .jss tbody td {
-  border-color: #e0e0e0;
+  border-color: var(--color-border);
 }
 
 .jss .jss_toolbar {
   background: #f8f8f8;
-  border-bottom: 1px solid #e0e0e0;
-  color: #333;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 .jss .jss_content {
+  flex: 1;
   min-height: 0;
-  max-height: 100%;
-  height: 100%;
   overflow: auto;
-  background: #ffffff;
-}
-
-/* Force jspreadsheet to respect container height */
-.data-table-container .jss,
-.pivot-table-container .jss {
-  height: 100%;
-  max-height: 100%;
-  overflow: hidden;
-}
-
-.jss .jss_container {
-  height: 100%;
-  max-height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  background: var(--color-background);
 }
 
 .jss input,
 .jss select,
 .jss textarea {
-  background: #ffffff;
-  color: #333;
+  background: var(--color-background);
+  color: var(--color-text);
   border: 1px solid #ccc;
 }
 
-/* Responsive design */
+/* Responsive Design */
 @media (max-width: 1200px) {
   .worksheets-container {
-    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
   }
 }
 
 @media (max-width: 768px) {
   .app {
-    padding: 1rem;
+    padding: var(--spacing-sm);
   }
 
   .app-header h1 {
@@ -278,8 +283,9 @@ body {
     width: 100%;
   }
 
-  .pivot-table-container,
-  .data-table-container {
-    height: 500px;
+  .data-worksheet,
+  .pivot-worksheet {
+    min-height: 400px;
+    max-height: 600px;
   }
 }
