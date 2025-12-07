@@ -1,23 +1,23 @@
 import type { ReactNode } from 'react';
 
-interface SheetContainerProps {
+interface HeaderProps {
     title: string;
     description: string;
     children: ReactNode;
     className?: string;
 }
 
-export default function SheetContainer({
+export default function Header({
     title,
     description,
     children,
     className = '',
-}: SheetContainerProps) {
+}: HeaderProps) {
     return (
-        <div className={`sheet-container ${className}`}>
+        <div className={`header ${className}`}>
             <h2>{title}</h2>
             <p>{description}</p>
-            <div className="sheet-content">
+            <div className="header-content">
                 {children}
             </div>
         </div>

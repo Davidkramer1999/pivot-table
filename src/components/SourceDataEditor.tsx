@@ -11,7 +11,7 @@ interface SourceDataEditorProps {
 /**
  * SourceDataEditor component - manages its own spreadsheet instance internally
  * Notifies parent component when data changes via callback
- */
+ */ 
 export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps) {
     const spreadsheetRef = useRef<jspreadsheet.spreadsheetInstance | null>(null);
     

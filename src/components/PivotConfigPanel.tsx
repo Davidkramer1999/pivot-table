@@ -1,4 +1,3 @@
-import { useMemo, useState, useEffect } from 'react';
 import Select from './ui/select';
 
 export interface PivotConfig {
@@ -8,40 +7,24 @@ export interface PivotConfig {
 }
 
 interface PivotConfigPanelProps {
+    config: PivotConfig;
     onConfigChange: (config: PivotConfig) => void;
 }
+const GROUP_OPTIONS = [
+    { value: 'Category', label: 'Category' },
+    { value: 'Subcategory', label: 'Subcategory' },
+    { value: 'Region', label: 'Region' },
+];
 
-/**
- * PivotConfigPanel component - manages pivot configuration
- * Automatically updates parent when configuration changes
- */
-export default function PivotConfigPanel({ onConfigChange }: PivotConfigPanelProps) {
-    const [groupBy1, setGroupBy1] = useState('Category');
-    const [groupBy2, setGroupBy2] = useState('Subcategory');
-    const [aggregateColumn, setAggregateColumn] = useState('Sales');
+const AGGREGATE_OPTIONS = [
+    { value: 'Sales', label: 'Sales (Sum)' },
+];
 
-    const groupOptions = useMemo(
-        () => [
-            { value: 'Category', label: 'Category' },
-            { value: 'Subcategory', label: 'Subcategory' },
-            { value: 'Region', label: 'Region' },
-        ],
-        []
-    );
+export default function PivotConfigPanel({ config, onConfigChange }: PivotConfigPanelProps) {
 
-    const aggregateOptions = useMemo(
-        () => [{ value: 'Sales', label: 'Sales (Sum)' }],
-        []
-    );
-
-    // Auto-update parent whenever configuration changes
-    useEffect(() => {
-        onConfigChange({
-            groupBy1,
-            groupBy2,
-            aggregateColumn,
-        });
-    }, [groupBy1, groupBy2, aggregateColumn, onConfigChange]);
+    const handleConfigFieldChange = (field: keyof PivotConfig, value: string) => {
+        onConfigChange({ ...config, [field]: value });
+    };
 
     return (
         <div className="pivot-controls">
@@ -49,21 +32,21 @@ export default function PivotConfigPanel({ onConfigChange }: PivotConfigPanelPro
             <div className="control-group">
                 <Select
                     label="Group By (Primary)"
-                    value={groupBy1}
-                    onChange={setGroupBy1}
-                    options={groupOptions}
+                    value={config.groupBy1}
+                    onChange={(value) => handleConfigFieldChange('groupBy1', value)}
+                    options={GROUP_OPTIONS}
                 />
                 <Select
                     label="Group By (Secondary)"
-                    value={groupBy2}
-                    onChange={setGroupBy2}
-                    options={groupOptions}
+                    value={config.groupBy2}
+                    onChange={(value) => handleConfigFieldChange('groupBy2', value)}
+                    options={GROUP_OPTIONS}
                 />
                 <Select
                     label="Aggregate Column"
-                    value={aggregateColumn}
-                    onChange={setAggregateColumn}
-                    options={aggregateOptions}
+                    value={config.aggregateColumn}
+                    onChange={(value) => handleConfigFieldChange('aggregateColumn', value)}
+                    options={AGGREGATE_OPTIONS}
                 />
             </div>
         </div>

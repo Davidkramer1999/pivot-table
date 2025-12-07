@@ -30,12 +30,12 @@ export default function PivotTableContainer() {
     return (
         <div className="pivot-table-app">
             <section className="controls-section">
-                <PivotConfigPanel onConfigChange={handleConfigChange} />
+                <PivotConfigPanel config={pivotConfig} onConfigChange={handleConfigChange} />
             </section>
 
             <div className="worksheets-container">
                 <SourceDataEditor onDataChange={handleDataChange} />
-                <PivotResultsView sourceData={currentData} config={pivotConfig} />
+                <PivotResultsView sourceData={currentData} config={pivotConfig} key={JSON.stringify(pivotConfig)} />
             </div>
         </div>
     );
