@@ -8,7 +8,6 @@ interface SourceDataEditorProps {
     onDataChange?: (data: (string | number)[][]) => void;
 }
 
-
 export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps) {
     const spreadsheetRef = useRef<jspreadsheet.spreadsheetInstance | null>(null);
     
@@ -18,33 +17,26 @@ export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps
         }
     }, [onDataChange]);
 
-    const extractAndNotifyData = useCallback(() => {
-        const worksheet = spreadsheetRef.current?.worksheets?.[0];
-        if (!worksheet || !onDataChange) return;
+    const notifyDataChange = useCallback(() => {
+        if (!onDataChange) return;
 
-        try {
-            const raw = worksheet.getData() as unknown;
-            const normalized = Array.isArray(raw) ? (raw as (string | number)[][]) : [];
-            if (normalized.length > 0) {
-                onDataChange(normalized);
-            }
-        } catch (error) {
-            console.error('Error extracting data from worksheet:', error);
+        const worksheet = spreadsheetRef.current?.worksheets?.[0];
+        if (!worksheet) return;
+
+        const data = worksheet.getData() as (string | number)[][];
+        if (data && data.length > 0) {
+            onDataChange(data);
         }
     }, [onDataChange]);
 
     const handleLoad = useCallback((instance: jspreadsheet.spreadsheetInstance) => {
         spreadsheetRef.current = instance;
-        
-        const worksheet = instance.worksheets?.[0];
-        if (worksheet && onDataChange) {
-            extractAndNotifyData();
-        }
-    }, [extractAndNotifyData, onDataChange]);
+        notifyDataChange();
+    }, [notifyDataChange]);
 
     const handleChange = useCallback(() => {
-        extractAndNotifyData();
-    }, [extractAndNotifyData]);
+        notifyDataChange();
+    }, [notifyDataChange]);
 
     return (
         <div className="data-worksheet">
