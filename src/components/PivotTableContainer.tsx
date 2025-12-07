@@ -5,10 +5,6 @@ import SourceDataEditor from './SourceDataEditor';
 import PivotConfigPanel from './PivotConfigPanel';
 import PivotResultsView from './PivotResultsView';
 
-/**
- * PivotTableContainer - Main container component that manages all state and data flow
- * This component handles the coordination between source data editor and pivot results view
- */
 export default function PivotTableContainer() {
     const [currentData, setCurrentData] = useState<(string | number)[][]>(sampleData);
     const [pivotConfig, setPivotConfig] = useState<PivotConfig>({
@@ -17,12 +13,10 @@ export default function PivotTableContainer() {
         aggregateColumn: 'Sales',
     });
 
-    // Handle data changes from the source data editor
     const handleDataChange = useCallback((data: (string | number)[][]) => {
         setCurrentData(data);
     }, []);
 
-    // Handle pivot configuration changes
     const handleConfigChange = useCallback((config: PivotConfig) => {
         setPivotConfig(config);
     }, []);
