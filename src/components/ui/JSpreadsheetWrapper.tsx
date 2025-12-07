@@ -8,7 +8,7 @@ import 'jspreadsheet/dist/jspreadsheet.css';
 // Set license once
 jspreadsheet.setLicense(JSPREADSHEET_LICENSE_KEY);
 
-interface SpreadsheetComponentProps {
+interface JSpreadsheetWrapperProps {
     children: ReactNode;
     tabs?: boolean;
     toolbar?: boolean;
@@ -16,13 +16,17 @@ interface SpreadsheetComponentProps {
     spreadsheetRef?: React.RefObject<jspreadsheet.spreadsheetInstance | null>;
 }
 
-export default function SpreadsheetComponent({
+/**
+ * Wrapper component for jspreadsheet Spreadsheet
+ * Handles license setup and provides a clean interface
+ */
+export default function JSpreadsheetWrapper({
     children,
     tabs = false,
     toolbar = false,
     onLoad,
     spreadsheetRef,
-}: SpreadsheetComponentProps) {
+}: JSpreadsheetWrapperProps) {
     const internalRef = useRef<jspreadsheet.spreadsheetInstance | null>(null);
     const ref = spreadsheetRef || internalRef;
 

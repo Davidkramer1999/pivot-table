@@ -1,6 +1,6 @@
 import { Worksheet } from '@jspreadsheet/react';
 
-interface WorksheetComponentProps {
+interface JWorksheetWrapperProps {
     data: (string | number)[][];
     columns: Array<{ title: string; width?: string }>;
     minDimensions?: [number, number];
@@ -8,13 +8,17 @@ interface WorksheetComponentProps {
     onChange?: () => void;
 }
 
-export default function WorksheetComponent({
+/**
+ * Wrapper component for jspreadsheet Worksheet
+ * Provides a clean interface for worksheet configuration
+ */
+export default function JWorksheetWrapper({
     data,
     columns,
     minDimensions,
     tableOverflow = true,
     onChange,
-}: WorksheetComponentProps) {
+}: JWorksheetWrapperProps) {
     return (
         <Worksheet
             data={data}
@@ -25,3 +29,4 @@ export default function WorksheetComponent({
         />
     );
 }
+

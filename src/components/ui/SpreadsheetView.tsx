@@ -1,7 +1,7 @@
 import React from 'react';
 import { jspreadsheet } from '@jspreadsheet/react';
-import SpreadsheetComponent from './SpreadsheetComponent';
-import WorksheetComponent from './WorksheetComponent';
+import JSpreadsheetWrapper from './JSpreadsheetWrapper';
+import JWorksheetWrapper from './JWorksheetWrapper';
 
 interface SpreadsheetViewProps {
     // Spreadsheet props
@@ -35,20 +35,20 @@ export default function SpreadsheetView({
 }: SpreadsheetViewProps) {
     return (
         <div className={containerClassName}>
-            <SpreadsheetComponent
+            <JSpreadsheetWrapper
                 spreadsheetRef={spreadsheetRef}
                 tabs={tabs}
                 toolbar={toolbar}
                 onLoad={onLoad}
             >
-                <WorksheetComponent
+                <JWorksheetWrapper
                     data={data}
                     columns={columns}
                     minDimensions={minDimensions}
                     tableOverflow={tableOverflow}
                     onChange={onChange}
                 />
-            </SpreadsheetComponent>
+            </JSpreadsheetWrapper>
         </div>
     );
 }

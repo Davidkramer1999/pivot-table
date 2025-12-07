@@ -7,15 +7,15 @@ export interface PivotConfig {
     aggregateColumn: string;
 }
 
-interface PivotControlsProps {
+interface PivotConfigPanelProps {
     onConfigChange: (config: PivotConfig) => void;
 }
 
 /**
- * PivotControls component - manages pivot configuration
+ * PivotConfigPanel component - manages pivot configuration
  * Automatically updates parent when configuration changes
  */
-export default function PivotControls({ onConfigChange }: PivotControlsProps) {
+export default function PivotConfigPanel({ onConfigChange }: PivotConfigPanelProps) {
     const [groupBy1, setGroupBy1] = useState('Category');
     const [groupBy2, setGroupBy2] = useState('Subcategory');
     const [aggregateColumn, setAggregateColumn] = useState('Sales');
@@ -69,3 +69,4 @@ export default function PivotControls({ onConfigChange }: PivotControlsProps) {
         </div>
     );
 }
+

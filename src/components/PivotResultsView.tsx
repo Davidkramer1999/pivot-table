@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
-import type { PivotConfig } from './PivotControls';
+import type { PivotConfig } from './PivotConfigPanel';
 import { generatePivotData } from '../utils/pivotHelpers';
-import SpreadsheetComponent from './ui/SpreadsheetComponent';
-import WorksheetComponent from './ui/WorksheetComponent';
+import JSpreadsheetWrapper from './ui/JSpreadsheetWrapper';
+import JWorksheetWrapper from './ui/JWorksheetWrapper';
 
-interface PivotTableWorksheetProps {
+interface PivotResultsViewProps {
     sourceData: (string | number)[][];
     config: PivotConfig;
 }
 
 /**
- * PivotTableWorksheet component - purely presentational
- * Receives data and config as props and displays the pivot table
+ * PivotResultsView component - purely presentational
+ * Receives data and config as props and displays the pivot table results
  */
-export default function PivotTableWorksheet({ sourceData, config }: PivotTableWorksheetProps) {
+export default function PivotResultsView({ sourceData, config }: PivotResultsViewProps) {
     // Generate pivot table data whenever sourceData or config changes
     const pivotData = useMemo(() => {
         if (!sourceData || sourceData.length === 0) {
@@ -36,15 +36,16 @@ export default function PivotTableWorksheet({ sourceData, config }: PivotTableWo
             <h2>Pivot Table Worksheet</h2>
             <p>Aggregated data based on selected grouping and aggregation settings.</p>
             <div className="pivot-table-container">
-                <SpreadsheetComponent tabs={false} toolbar={false}>
-                    <WorksheetComponent
+                <JSpreadsheetWrapper tabs={false} toolbar={false}>
+                    <JWorksheetWrapper
                         data={pivotData.data}
                         columns={pivotData.columns}
                         minDimensions={[pivotData.columns.length, pivotData.data.length + 5]}
                         tableOverflow={true}
                     />
-                </SpreadsheetComponent>
+                </JSpreadsheetWrapper>
             </div>
         </div>
     );
 }
+

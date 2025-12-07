@@ -1,18 +1,18 @@
 import { useRef, useCallback, useEffect } from 'react';
 import { jspreadsheet } from '@jspreadsheet/react';
 import { sampleData, columnHeaders } from '../data/sampleData';
-import SpreadsheetComponent from './ui/SpreadsheetComponent';
-import WorksheetComponent from './ui/WorksheetComponent';
+import JSpreadsheetWrapper from './ui/JSpreadsheetWrapper';
+import JWorksheetWrapper from './ui/JWorksheetWrapper';
 
-interface DataWorksheetProps {
+interface SourceDataEditorProps {
     onDataChange?: (data: (string | number)[][]) => void;
 }
 
 /**
- * DataWorksheet component - manages its own spreadsheet instance internally
+ * SourceDataEditor component - manages its own spreadsheet instance internally
  * Notifies parent component when data changes via callback
  */
-export default function DataWorksheet({ onDataChange }: DataWorksheetProps) {
+export default function SourceDataEditor({ onDataChange }: SourceDataEditorProps) {
     const spreadsheetRef = useRef<jspreadsheet.spreadsheetInstance | null>(null);
     
     // Notify parent with initial data on mount
@@ -59,21 +59,22 @@ export default function DataWorksheet({ onDataChange }: DataWorksheetProps) {
             <h2>Data Worksheet</h2>
             <p>Edit the data below. Changes will automatically update the pivot table.</p>
             <div className="data-table-container">
-                <SpreadsheetComponent
+                <JSpreadsheetWrapper
                     spreadsheetRef={spreadsheetRef}
                     tabs={true}
                     toolbar={true}
                     onLoad={handleLoad}
                 >
-                    <WorksheetComponent
+                    <JWorksheetWrapper
                         data={sampleData}
                         columns={columnHeaders}
                         minDimensions={[4, 25]}
                         tableOverflow={true}
                         onChange={handleChange}
                     />
-                </SpreadsheetComponent>
+                </JSpreadsheetWrapper>
             </div>
         </div>
     );
 }
+

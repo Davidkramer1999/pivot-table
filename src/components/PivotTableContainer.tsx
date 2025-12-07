@@ -1,15 +1,15 @@
 import { useState, useCallback } from 'react';
-import type { PivotConfig } from './PivotControls';
+import type { PivotConfig } from './PivotConfigPanel';
 import { sampleData } from '../data/sampleData';
-import DataWorksheet from './DataWorksheet';
-import PivotControls from './PivotControls';
-import PivotTableWorksheet from './PivotTableWorksheet';
+import SourceDataEditor from './SourceDataEditor';
+import PivotConfigPanel from './PivotConfigPanel';
+import PivotResultsView from './PivotResultsView';
 
 /**
- * Main container component that manages all state and data flow
- * This component handles the coordination between data worksheet and pivot table
+ * PivotTableContainer - Main container component that manages all state and data flow
+ * This component handles the coordination between source data editor and pivot results view
  */
-export default function PivotTableApp() {
+export default function PivotTableContainer() {
     const [currentData, setCurrentData] = useState<(string | number)[][]>(sampleData);
     const [pivotConfig, setPivotConfig] = useState<PivotConfig>({
         groupBy1: 'Category',
@@ -17,7 +17,7 @@ export default function PivotTableApp() {
         aggregateColumn: 'Sales',
     });
 
-    // Handle data changes from the data worksheet
+    // Handle data changes from the source data editor
     const handleDataChange = useCallback((data: (string | number)[][]) => {
         setCurrentData(data);
     }, []);
@@ -30,12 +30,12 @@ export default function PivotTableApp() {
     return (
         <div className="pivot-table-app">
             <section className="controls-section">
-                <PivotControls onConfigChange={handleConfigChange} />
+                <PivotConfigPanel onConfigChange={handleConfigChange} />
             </section>
 
             <div className="worksheets-container">
-                <DataWorksheet onDataChange={handleDataChange} />
-                <PivotTableWorksheet sourceData={currentData} config={pivotConfig} key={JSON.stringify(pivotConfig)} />
+                <SourceDataEditor onDataChange={handleDataChange} />
+                <PivotResultsView sourceData={currentData} config={pivotConfig} />
             </div>
         </div>
     );

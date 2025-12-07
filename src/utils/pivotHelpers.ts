@@ -1,4 +1,4 @@
-import type { PivotConfig } from '../components/PivotControls';
+import type { PivotConfig } from '../components/PivotConfigPanel';
 
 /**
  * Column mapping for the source data

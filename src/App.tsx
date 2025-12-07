@@ -1,4 +1,4 @@
-import PivotTableApp from './components/PivotTableApp';
+import PivotTableContainer from './components/PivotTableContainer';
 import './App.css';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
       </header>
 
       <main className="app-main">
-        <PivotTableApp />
+        <PivotTableContainer />
       </main>
     </div>
   );
