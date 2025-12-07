@@ -14,9 +14,6 @@ interface SelectProps {
     className?: string;
 }
 
-/**
- * Lightweight select component to keep form markup consistent.
- */
 export default function Select({
     label,
     value,

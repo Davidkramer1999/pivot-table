@@ -1,14 +1,4 @@
-import type { PivotConfig } from '../components/PivotControls';
-
-/**
- * Column mapping for the source data
- */
-const COLUMN_MAP: { [key: string]: number } = {
-    'Category': 0,
-    'Subcategory': 1,
-    'Region': 2,
-    'Sales': 3,
-};
+import type { PivotConfig } from '../components/PivotConfigPanel';
 
 /**
  * Result type for generated pivot data
@@ -19,48 +9,50 @@ export interface PivotDataResult {
 }
 
 /**
- * Generate pivot table data from source data
+ * Generate pivot table data from source data with formulas
  * 
  * @param sourceData - The raw source data as a 2D array
+ * @param columnHeaders - Array of column header objects with 'title' property
  * @param config - Pivot configuration specifying grouping and aggregation
+ * @param sheetName - Name of the source sheet for formula references (default: 'Sheet1')
  * @returns Pivot table data with columns configuration
  */
 export function generatePivotData(
     sourceData: (string | number)[][],
-    config: PivotConfig
+    columnHeaders: { title: string }[],
+    config: PivotConfig,
+    sheetName: string = 'Sheet1'
 ): PivotDataResult {
-    const group1Index = COLUMN_MAP[config.groupBy1];
-    const group2Index = COLUMN_MAP[config.groupBy2];
-    const aggIndex = COLUMN_MAP[config.aggregateColumn];
+    const group1Index = columnHeaders.findIndex(c => c.title === config.groupBy1);
+    const group2Index = columnHeaders.findIndex(c => c.title === config.groupBy2);
+    const aggIndex = columnHeaders.findIndex(c => c.title === config.aggregateColumn);
+    
+    if (group1Index === -1 || group2Index === -1 || aggIndex === -1) {
+        return { data: [], columns: [] };
+    }
 
-    // Build pivot structure
-    const pivotMap = new Map<string, Map<string, number>>();
+    const col1 = String.fromCharCode(65 + group1Index);
+    const col2 = String.fromCharCode(65 + group2Index);
+    const colAgg = String.fromCharCode(65 + aggIndex);
+
+    // Build pivot structure - track combinations
+    const pivotMap = new Map<string, Set<string>>();
     const group1Values = new Set<string>();
-    const group2Values = new Set<string>();
 
-    // Aggregate data
     sourceData.forEach((row) => {
         const group1Value = String(row[group1Index]);
         const group2Value = String(row[group2Index]);
-        const aggValue = Number(row[aggIndex]) || 0;
-
         group1Values.add(group1Value);
-        group2Values.add(group2Value);
-
         if (!pivotMap.has(group1Value)) {
-            pivotMap.set(group1Value, new Map());
+            pivotMap.set(group1Value, new Set());
         }
-
-        const group2Map = pivotMap.get(group1Value)!;
-        const currentValue = group2Map.get(group2Value) || 0;
-        group2Map.set(group2Value, currentValue + aggValue);
+        pivotMap.get(group1Value)!.add(group2Value);
     });
 
     // Sort group values
     const sortedGroup1 = Array.from(group1Values).sort();
-    const sortedGroup2 = Array.from(group2Values).sort();
 
-    // Build output data
+    // Build output data with formulas
     const outputData: (string | number)[][] = [];
     const columns = [
         { title: config.groupBy1, width: '150px' },
@@ -68,27 +60,28 @@ export function generatePivotData(
         { title: `Total ${config.aggregateColumn}`, width: '150px' },
     ];
 
-    let grandTotal = 0;
-
     sortedGroup1.forEach((group1Val) => {
-        const group2Map = pivotMap.get(group1Val)!;
-        let group1Subtotal = 0;
-
-        sortedGroup2.forEach((group2Val) => {
-            const value = group2Map.get(group2Val) || 0;
-            if (value > 0) {
-                outputData.push([group1Val, group2Val, value]);
-                group1Subtotal += value;
-            }
+        const g2Vals = Array.from(pivotMap.get(group1Val)!).sort();
+        
+        // Add data rows with formulas
+        g2Vals.forEach((group2Val) => {
+            outputData.push([
+                group1Val,
+                group2Val,
+                `=SUMIFS(${sheetName}!${colAgg}:${colAgg}, ${sheetName}!${col1}:${col1}, "${group1Val}", ${sheetName}!${col2}:${col2}, "${group2Val}")`
+            ]);
         });
-
-        // Add subtotal row
-        outputData.push([`${group1Val} Subtotal`, '', group1Subtotal]);
-        grandTotal += group1Subtotal;
+        
+        // Add empty row separator
+        outputData.push(['', '']);
+        
+        // Add subtotal with formula
+        outputData.push([`${group1Val} Total:`, '', `=SUMIF(${sheetName}!${col1}:${col1}, "${group1Val}", ${sheetName}!${colAgg}:${colAgg})`]);
     });
 
-    // Add grand total row
-    outputData.push(['Grand Total', '', grandTotal]);
+    // Add grand total
+    outputData.push(['', '']);
+    outputData.push(['Grand Total:', '', `=SUM(${sheetName}!${colAgg}:${colAgg})`]);
 
     return { data: outputData, columns };
 }
